@@ -1,160 +1,414 @@
 'use client';
 
-import Image from 'next/image';
 import { motion } from 'framer-motion';
-import { bundleIncludes } from '../data/ebooks';
-import { CHECKOUT_URL, PRICE_FULL, SAVINGS, DISCOUNT_PCT } from '../lib/constants';
+import { CHECKOUT_URL, CHECKOUT_URL_COMBO3, CHECKOUT_URL_COMBO5 } from '../lib/constants';
 
-// Visual spread of ebook covers for the mockup stack
-const COVER_IMAGES = [
-    'https://images.unsplash.com/photo-1512621776951-a57141f2eefd?w=300&q=80',
-    'https://images.unsplash.com/photo-1578985545062-69928b1d9587?w=300&q=80',
-    'https://images.unsplash.com/photo-1490645935967-10de6ba17061?w=300&q=80',
-    'https://images.unsplash.com/photo-1569050467447-ce54b3bbc37d?w=300&q=80',
-    'https://images.unsplash.com/photo-1546069901-ba9599a7e63c?w=300&q=80',
-];
-
-function CheckIcon() {
-    return (
-        <svg width="18" height="18" viewBox="0 0 18 18" fill="none" aria-hidden="true" style={{ flexShrink: 0 }}>
-            <circle cx="9" cy="9" r="9" fill="rgba(217,119,6,0.2)" />
-            <path d="M5.5 9.5L7.5 11.5L12.5 6.5" stroke="#F59E0B" strokeWidth="1.75" strokeLinecap="round" strokeLinejoin="round" />
-        </svg>
-    );
-}
+// ── Icons ────────────────────────────────────────────────────────────────────
 
 function StarIcon() {
     return (
-        <svg width="14" height="14" viewBox="0 0 14 14" fill="#D97706" aria-hidden="true">
+        <svg width="12" height="12" viewBox="0 0 14 14" fill="#D97706" aria-hidden="true">
             <path d="M7 1.3l1.57 3.18 3.51.51-2.54 2.47.6 3.5L7 9.22 3.86 10.96l.6-3.5L2 4.99l3.51-.51z" />
         </svg>
     );
 }
 
+function CheckIcon({ dim = false }) {
+    return (
+        <svg width="16" height="16" viewBox="0 0 18 18" fill="none" aria-hidden="true" style={{ flexShrink: 0, marginTop: '2px' }}>
+            <circle cx="9" cy="9" r="9" fill={dim ? 'rgba(255,251,235,0.08)' : 'rgba(217,119,6,0.2)'} />
+            <path
+                d="M5.5 9.5L7.5 11.5L12.5 6.5"
+                stroke={dim ? 'rgba(255,251,235,0.35)' : '#F59E0B'}
+                strokeWidth="1.75"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+            />
+        </svg>
+    );
+}
+
+function ShieldIcon() {
+    return (
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+            <path d="M12 2L3 7v6c0 5.25 3.75 10.15 9 11.35C17.25 23.15 21 18.25 21 13V7L12 2z"
+                fill="rgba(217,119,6,0.15)" stroke="rgba(217,119,6,0.5)" strokeWidth="1.5" />
+            <path d="M9 12l2 2 4-4" stroke="#F59E0B" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
+        </svg>
+    );
+}
+
+function FlashIcon() {
+    return (
+        <svg width="12" height="12" viewBox="0 0 24 24" fill="rgba(217,119,6,0.6)" aria-hidden="true">
+            <path d="M13 2L4.5 13.5H11L10 22L20.5 10H14L13 2z" />
+        </svg>
+    );
+}
+
+// ── Motion variants ──────────────────────────────────────────────────────────
+
 const fadeUp = {
-    hidden: { opacity: 0, y: 40 },
-    show: { opacity: 1, y: 0, transition: { duration: 0.8, ease: [0.16, 1, 0.3, 1] } },
+    hidden: { opacity: 0, y: 36 },
+    show:   { opacity: 1, y: 0, transition: { duration: 0.7, ease: [0.16, 1, 0.3, 1] } },
 };
 
-const listVariants = {
+const stagger = {
     hidden: {},
-    show: { transition: { staggerChildren: 0.06 } },
+    show:   { transition: { staggerChildren: 0.1, delayChildren: 0.15 } },
 };
 
-const listItem = {
-    hidden: { opacity: 0, x: -14 },
-    show: { opacity: 1, x: 0, transition: { duration: 0.5, ease: [0.16, 1, 0.3, 1] } },
-};
+// ── Plan data ────────────────────────────────────────────────────────────────
 
-function BookStack() {
+const PLANS = [
+    {
+        key: 'combo3',
+        label: 'Combo 3 Ebooks',
+        priceNum: '39',
+        priceDec: ',90',
+        description: 'Escolha qualquer 3 ebooks da coleção.',
+        note: 'Você escolhe os volumes após a compra.',
+        cta: 'Montar meu Combo 3',
+        href: CHECKOUT_URL_COMBO3,
+        perks: [
+            'Escolha 3 títulos à sua vontade',
+            'Download em PDF imediato',
+            '7 dias de garantia',
+        ],
+        highlight: false,
+        badge: null,
+    },
+    {
+        key: 'combo5',
+        label: 'Combo 5 Ebooks',
+        priceNum: '59',
+        priceDec: ',90',
+        description: 'Escolha qualquer 5 ebooks da coleção.',
+        note: 'Você escolhe os volumes após a compra.',
+        cta: 'Montar meu Combo 5',
+        href: CHECKOUT_URL_COMBO5,
+        perks: [
+            'Escolha 5 títulos à sua vontade',
+            'Download em PDF imediato',
+            '7 dias de garantia',
+        ],
+        highlight: false,
+        badge: null,
+    },
+    {
+        key: 'full',
+        label: 'Coleção Completa',
+        priceNum: '97',
+        priceDec: ',90',
+        priceFull: 'R$397,00',
+        savings: 'R$299,10',
+        discountPct: '75% OFF',
+        description: 'Leve os 22 ebooks da coleção com o melhor custo-benefício.',
+        note: null,
+        cta: 'Quero a Coleção Completa',
+        href: CHECKOUT_URL,
+        perks: [
+            'Todos os 22 volumes inclusos',
+            'Acesso imediato após o pagamento',
+            'Atualizações gratuitas para sempre',
+            '7 dias de garantia total',
+        ],
+        highlight: true,
+        badge: 'Mais vendido',
+    },
+];
+
+// ── PlanCard ─────────────────────────────────────────────────────────────────
+
+function PlanCard({ plan, index }) {
+    const {
+        label, priceNum, priceDec, priceFull, savings, discountPct,
+        description, note, cta, href, perks, highlight, badge,
+    } = plan;
+
     return (
         <motion.div
-            initial={{ opacity: 0, y: 40 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true, margin: '-80px' }}
-            transition={{ duration: 0.9, ease: [0.16, 1, 0.3, 1] }}
-            style={{ position: 'relative', width: '100%', maxWidth: '360px', margin: '0 auto', aspectRatio: '1/1' }}
+            variants={fadeUp}
+            style={{
+                position: 'relative',
+                borderRadius: '1.5rem',
+                padding: highlight ? 'clamp(1.75rem, 4vw, 2.5rem)' : 'clamp(1.5rem, 3.5vw, 2.25rem)',
+                display: 'flex',
+                flexDirection: 'column',
+                background: highlight
+                    ? 'linear-gradient(155deg, rgba(154,52,18,0.22) 0%, rgba(100,30,5,0.14) 60%, rgba(15,5,0,0.1) 100%)'
+                    : 'rgba(255,251,235,0.03)',
+                border: highlight
+                    ? '1.5px solid rgba(217,119,6,0.5)'
+                    : '1px solid rgba(255,251,235,0.07)',
+                boxShadow: highlight
+                    ? '0 0 80px rgba(154,52,18,0.25), 0 8px 32px rgba(0,0,0,0.5)'
+                    : '0 2px 20px rgba(0,0,0,0.3)',
+                transform: highlight ? 'scale(1.04)' : 'scale(1)',
+                transition: 'box-shadow 0.3s ease',
+            }}
         >
-            {/* Glow under the stack */}
-            <div
-                aria-hidden="true"
-                style={{
-                    position: 'absolute',
-                    bottom: '5%',
-                    left: '15%',
-                    right: '15%',
-                    height: '60px',
-                    background: 'radial-gradient(ellipse, rgba(217,119,6,0.5) 0%, transparent 70%)',
-                    filter: 'blur(20px)',
-                }}
-            />
+            {/* Shimmer line on highlighted card top */}
+            {highlight && (
+                <div
+                    aria-hidden="true"
+                    style={{
+                        position: 'absolute',
+                        top: 0,
+                        left: '8%',
+                        right: '8%',
+                        height: '1.5px',
+                        background: 'linear-gradient(90deg, transparent, rgba(217,119,6,0.8), rgba(251,146,60,0.6), transparent)',
+                        borderRadius: '2px',
+                    }}
+                />
+            )}
 
-            {/* Stacked book covers — fanned out */}
-            {COVER_IMAGES.map((src, i) => {
-                const angle = (i - 2) * 7;
-                const zIndex = i;
-                const translateX = (i - 2) * 12;
-                const translateY = (2 - i) * 6;
-                return (
-                    <motion.div
-                        key={i}
-                        initial={{ opacity: 0, rotate: angle * 0.3, scale: 0.85 }}
-                        whileInView={{ opacity: 1, rotate: angle, scale: 1 }}
-                        viewport={{ once: true }}
-                        transition={{ duration: 0.8, delay: 0.1 * i, ease: [0.16, 1, 0.3, 1] }}
-                        whileHover={{ rotate: 0, scale: 1.05, zIndex: 10 }}
+            {/* Badge row — always reserve height so cards align */}
+            <div style={{ minHeight: '2.25rem', marginBottom: '1rem', display: 'flex', alignItems: 'center' }}>
+                {badge ? (
+                    <span
                         style={{
-                            position: 'absolute',
-                            top: '10%',
-                            left: '20%',
-                            width: '55%',
-                            aspectRatio: '3/4',
-                            borderRadius: '10px',
-                            overflow: 'hidden',
-                            zIndex,
-                            transform: `rotate(${angle}deg) translate(${translateX}px, ${translateY}px)`,
-                            boxShadow: '0 20px 60px rgba(0,0,0,0.6), 0 4px 16px rgba(0,0,0,0.4)',
-                            border: '1px solid rgba(255,255,255,0.1)',
-                            cursor: 'default',
+                            display: 'inline-flex',
+                            alignItems: 'center',
+                            gap: '0.35rem',
+                            background: 'linear-gradient(135deg, rgba(217,119,6,0.28) 0%, rgba(154,52,18,0.28) 100%)',
+                            border: '1px solid rgba(217,119,6,0.55)',
+                            color: '#FCD34D',
+                            padding: '0.3rem 0.85rem',
+                            borderRadius: '2rem',
+                            fontFamily: 'var(--font-mono)',
+                            fontSize: '0.6rem',
+                            letterSpacing: '0.13em',
+                            textTransform: 'uppercase',
+                            boxShadow: '0 0 16px rgba(217,119,6,0.15)',
                         }}
                     >
-                        <Image src={src} alt="" fill sizes="200px" style={{ objectFit: 'cover' }} />
-                        <div
+                        {[1,2,3,4,5].map(i => <StarIcon key={i} />)}
+                        {badge}
+                    </span>
+                ) : null}
+            </div>
+
+            {/* Plan name */}
+            <p
+                style={{
+                    fontFamily: 'var(--font-display)',
+                    fontSize: highlight ? '1.4rem' : '1.15rem',
+                    fontWeight: 700,
+                    color: highlight ? '#FCD34D' : 'rgba(255,251,235,0.8)',
+                    marginBottom: '0.4rem',
+                    lineHeight: 1.2,
+                }}
+            >
+                {label}
+            </p>
+
+            {/* Description */}
+            <p
+                style={{
+                    fontFamily: 'var(--font-body)',
+                    fontSize: '0.875rem',
+                    color: highlight ? 'rgba(255,251,235,0.6)' : 'rgba(255,251,235,0.45)',
+                    lineHeight: 1.55,
+                    marginBottom: note ? '0.4rem' : '1.5rem',
+                }}
+            >
+                {description}
+            </p>
+
+            {/* Combo note */}
+            {note && (
+                <p
+                    style={{
+                        fontFamily: 'var(--font-mono)',
+                        fontSize: '0.62rem',
+                        letterSpacing: '0.05em',
+                        color: 'rgba(255,251,235,0.28)',
+                        marginBottom: '1.5rem',
+                        textTransform: 'uppercase',
+                    }}
+                >
+                    {note}
+                </p>
+            )}
+
+            {/* Price block */}
+            <div style={{ marginBottom: '1.25rem' }}>
+                {priceFull && (
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '0.6rem', marginBottom: '0.2rem', flexWrap: 'wrap' }}>
+                        <span
                             style={{
-                                position: 'absolute',
-                                inset: 0,
-                                background: 'linear-gradient(to bottom, rgba(10,4,0,0.2) 0%, rgba(10,4,0,0.55) 100%)',
+                                fontFamily: 'var(--font-mono)',
+                                fontSize: '0.78rem',
+                                color: 'rgba(255,251,235,0.22)',
+                                textDecoration: 'line-through',
                             }}
-                        />
-                        {/* Subtle "Atlas das Receitas" watermark */}
-                        <div
+                        >
+                            De {priceFull}
+                        </span>
+                        <span
                             style={{
-                                position: 'absolute',
-                                bottom: '0.6rem',
-                                left: '0.6rem',
-                                fontFamily: 'var(--font-display)',
-                                fontSize: '0.5rem',
-                                fontWeight: 700,
+                                fontFamily: 'var(--font-mono)',
+                                fontSize: '0.62rem',
                                 letterSpacing: '0.1em',
-                                color: 'rgba(255,255,255,0.6)',
+                                color: '#FCD34D',
+                                background: 'rgba(217,119,6,0.2)',
+                                border: '1px solid rgba(217,119,6,0.3)',
+                                padding: '0.15rem 0.5rem',
+                                borderRadius: '2rem',
                                 textTransform: 'uppercase',
                             }}
                         >
-                            Atlas das Receitas
-                        </div>
-                    </motion.div>
-                );
-            })}
+                            {discountPct}
+                        </span>
+                    </div>
+                )}
 
-            {/* "22 ebooks" badge */}
-            <motion.div
-                initial={{ opacity: 0, scale: 0.7 }}
-                whileInView={{ opacity: 1, scale: 1 }}
-                viewport={{ once: true }}
-                transition={{ delay: 0.7, duration: 0.5, ease: [0.16, 1, 0.3, 1] }}
+                <div style={{ display: 'flex', alignItems: 'flex-end', gap: '0.15rem', lineHeight: 1 }}>
+                    <span
+                        style={{
+                            fontFamily: 'var(--font-mono)',
+                            fontSize: '0.9rem',
+                            color: highlight ? 'rgba(252,211,77,0.55)' : 'rgba(255,251,235,0.38)',
+                            paddingBottom: highlight ? '0.7rem' : '0.45rem',
+                        }}
+                    >
+                        R$
+                    </span>
+                    <span
+                        style={{
+                            fontFamily: 'var(--font-display)',
+                            fontSize: highlight ? 'clamp(3rem, 7vw, 4.5rem)' : 'clamp(2.2rem, 5vw, 3rem)',
+                            fontWeight: 900,
+                            color: highlight ? '#FCD34D' : 'rgba(255,251,235,0.88)',
+                            letterSpacing: '-0.03em',
+                        }}
+                    >
+                        {priceNum}
+                    </span>
+                    <span
+                        style={{
+                            fontFamily: 'var(--font-display)',
+                            fontSize: highlight ? '1.25rem' : '1rem',
+                            fontWeight: 700,
+                            color: highlight ? 'rgba(252,211,77,0.55)' : 'rgba(255,251,235,0.38)',
+                            paddingBottom: highlight ? '0.7rem' : '0.45rem',
+                        }}
+                    >
+                        {priceDec}
+                    </span>
+                </div>
+
+                {savings && (
+                    <p
+                        style={{
+                            fontFamily: 'var(--font-mono)',
+                            fontSize: '0.65rem',
+                            letterSpacing: '0.06em',
+                            color: 'rgba(252,211,77,0.45)',
+                            marginTop: '0.2rem',
+                            textTransform: 'uppercase',
+                        }}
+                    >
+                        Economia de {savings}
+                    </p>
+                )}
+            </div>
+
+            {/* Perks list */}
+            <ul
                 style={{
-                    position: 'absolute',
-                    bottom: '8%',
-                    right: '6%',
-                    background: 'linear-gradient(135deg, #D97706 0%, #B45309 100%)',
-                    borderRadius: '50%',
-                    width: '80px',
-                    height: '80px',
+                    listStyle: 'none',
+                    padding: 0,
+                    margin: '0 0 2rem',
                     display: 'flex',
                     flexDirection: 'column',
-                    alignItems: 'center',
-                    justifyContent: 'center',
-                    boxShadow: '0 8px 32px rgba(217,119,6,0.6)',
-                    zIndex: 20,
-                    border: '3px solid rgba(255,255,255,0.15)',
+                    gap: '0.6rem',
+                    flexGrow: 1,
                 }}
             >
-                <span style={{ fontFamily: 'var(--font-display)', fontSize: '1.4rem', fontWeight: 900, color: '#FFFFFF', lineHeight: 1 }}>22</span>
-                <span style={{ fontFamily: 'var(--font-mono)', fontSize: '0.45rem', letterSpacing: '0.1em', color: 'rgba(255,255,255,0.85)', textTransform: 'uppercase', marginTop: '0.1rem' }}>ebooks</span>
-            </motion.div>
+                {perks.map((perk) => (
+                    <li key={perk} style={{ display: 'flex', alignItems: 'flex-start', gap: '0.55rem' }}>
+                        <CheckIcon dim={!highlight} />
+                        <span
+                            style={{
+                                fontFamily: 'var(--font-body)',
+                                fontSize: '0.875rem',
+                                color: highlight ? 'rgba(255,251,235,0.7)' : 'rgba(255,251,235,0.45)',
+                                lineHeight: 1.5,
+                            }}
+                        >
+                            {perk}
+                        </span>
+                    </li>
+                ))}
+            </ul>
+
+            {/* CTA button */}
+            <motion.a
+                href={href}
+                target="_blank"
+                rel="noopener noreferrer"
+                whileHover={{
+                    scale: 1.03,
+                    boxShadow: highlight
+                        ? '0 8px 40px rgba(154,52,18,0.7)'
+                        : '0 4px 20px rgba(255,251,235,0.08)',
+                }}
+                whileTap={{ scale: 0.97 }}
+                transition={{ duration: 0.18 }}
+                style={{
+                    display: 'block',
+                    width: '100%',
+                    textAlign: 'center',
+                    textDecoration: 'none',
+                    padding: highlight ? '1rem 1.5rem' : '0.875rem 1.25rem',
+                    borderRadius: '0.875rem',
+                    fontFamily: 'var(--font-body)',
+                    fontWeight: 700,
+                    fontSize: highlight ? '1rem' : '0.9rem',
+                    letterSpacing: '0.01em',
+                    cursor: 'pointer',
+                    background: highlight
+                        ? 'linear-gradient(135deg, #C2410C 0%, #9A3412 100%)'
+                        : 'rgba(255,251,235,0.06)',
+                    color: highlight ? '#FFFFFF' : 'rgba(255,251,235,0.6)',
+                    border: highlight ? 'none' : '1px solid rgba(255,251,235,0.1)',
+                    boxShadow: highlight ? '0 4px 28px rgba(154,52,18,0.5)' : 'none',
+                }}
+            >
+                {cta} →
+            </motion.a>
+
+            {/* Trust micro-copy */}
+            <div
+                style={{
+                    display: 'flex',
+                    justifyContent: 'center',
+                    alignItems: 'center',
+                    gap: '0.5rem',
+                    marginTop: '0.875rem',
+                }}
+            >
+                <ShieldIcon />
+                <span
+                    style={{
+                        fontFamily: 'var(--font-mono)',
+                        fontSize: '0.58rem',
+                        letterSpacing: '0.07em',
+                        color: 'rgba(255,251,235,0.2)',
+                        textTransform: 'uppercase',
+                    }}
+                >
+                    Pagamento seguro · Acesso imediato
+                </span>
+            </div>
         </motion.div>
     );
 }
+
+// ── BundleSection ─────────────────────────────────────────────────────────────
 
 export function BundleSection() {
     return (
@@ -166,67 +420,56 @@ export function BundleSection() {
                 background: 'linear-gradient(170deg, #0A0400 0%, #180900 40%, #0F0500 100%)',
             }}
         >
-            {/* Texture grain overlay */}
+            {/* Grain texture */}
             <div
                 aria-hidden="true"
                 style={{
                     position: 'absolute',
                     inset: 0,
-                    backgroundImage: `url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='300' height='300'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.75' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='300' height='300' filter='url(%23n)' opacity='0.035'/%3E%3C/svg%3E")`,
+                    backgroundImage: `url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='300' height='300'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.75' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='300' height='300' filter='url(%23n)' opacity='0.04'/%3E%3C/svg%3E")`,
                     backgroundRepeat: 'repeat',
                     pointerEvents: 'none',
                     zIndex: 0,
                 }}
             />
-            {/* Top glow */}
-            <div aria-hidden="true" style={{ position: 'absolute', top: 0, left: '50%', transform: 'translateX(-50%)', width: '900px', height: '500px', background: 'radial-gradient(ellipse, rgba(154,52,18,0.28) 0%, transparent 70%)', pointerEvents: 'none', zIndex: 0 }} />
-            {/* Bottom glow */}
-            <div aria-hidden="true" style={{ position: 'absolute', bottom: 0, left: '50%', transform: 'translateX(-50%)', width: '700px', height: '300px', background: 'radial-gradient(ellipse, rgba(217,119,6,0.15) 0%, transparent 70%)', pointerEvents: 'none', zIndex: 0 }} />
+            {/* Top radial glow */}
+            <div
+                aria-hidden="true"
+                style={{
+                    position: 'absolute', top: 0, left: '50%',
+                    transform: 'translateX(-50%)',
+                    width: '1000px', height: '560px',
+                    background: 'radial-gradient(ellipse, rgba(154,52,18,0.26) 0%, transparent 70%)',
+                    pointerEvents: 'none', zIndex: 0,
+                }}
+            />
+            {/* Bottom radial glow */}
+            <div
+                aria-hidden="true"
+                style={{
+                    position: 'absolute', bottom: 0, left: '50%',
+                    transform: 'translateX(-50%)',
+                    width: '700px', height: '320px',
+                    background: 'radial-gradient(ellipse, rgba(217,119,6,0.13) 0%, transparent 70%)',
+                    pointerEvents: 'none', zIndex: 0,
+                }}
+            />
 
             <div className="container section" style={{ position: 'relative', zIndex: 1 }}>
 
-                {/* ── "Mais Popular" badge ── */}
-                <motion.div
-                    variants={fadeUp}
-                    initial="hidden"
-                    whileInView="show"
-                    viewport={{ once: true, margin: '-80px' }}
-                    style={{ textAlign: 'center', marginBottom: '2rem' }}
-                >
-                    <span
-                        style={{
-                            display: 'inline-flex',
-                            alignItems: 'center',
-                            gap: '0.5rem',
-                            background: 'linear-gradient(135deg, rgba(217,119,6,0.25) 0%, rgba(154,52,18,0.25) 100%)',
-                            border: '1px solid rgba(217,119,6,0.45)',
-                            color: '#FCD34D',
-                            padding: '0.45rem 1.25rem',
-                            borderRadius: '2rem',
-                            fontFamily: 'var(--font-mono)',
-                            fontSize: '0.68rem',
-                            letterSpacing: '0.15em',
-                            textTransform: 'uppercase',
-                            boxShadow: '0 0 24px rgba(217,119,6,0.2)',
-                        }}
-                    >
-                        <span style={{ display: 'flex', gap: '2px' }}>
-                            {[1,2,3,4,5].map(i => <StarIcon key={i} />)}
-                        </span>
-                        Mais Popular — Melhor Custo-Benefício
-                    </span>
-                </motion.div>
-
-                {/* ── Section heading ── */}
+                {/* ── Heading ── */}
                 <motion.div
                     variants={fadeUp}
                     initial="hidden"
                     whileInView="show"
                     viewport={{ once: true, margin: '-60px' }}
-                    style={{ textAlign: 'center', marginBottom: 'clamp(2.5rem, 5vw, 4rem)' }}
+                    style={{ textAlign: 'center', marginBottom: 'clamp(2.5rem, 5vw, 4.5rem)' }}
                 >
-                    <p className="label" style={{ color: 'rgba(217,119,6,0.8)', marginBottom: '0.75rem' }}>
-                        Coleção Completa · 22 Ebooks Digitais
+                    <p
+                        className="label"
+                        style={{ color: 'rgba(217,119,6,0.75)', marginBottom: '0.875rem' }}
+                    >
+                        Escolha seu plano
                     </p>
                     <h2
                         style={{
@@ -235,9 +478,10 @@ export function BundleSection() {
                             fontSize: 'clamp(1.9rem, 4.5vw, 3.25rem)',
                             lineHeight: 1.1,
                             letterSpacing: '-0.025em',
+                            marginBottom: '1rem',
                         }}
                     >
-                        Tudo que você precisa para
+                        Monte seu combo ou leve
                         <br />
                         <span
                             style={{
@@ -247,169 +491,70 @@ export function BundleSection() {
                                 backgroundClip: 'text',
                             }}
                         >
-                            transformar sua cozinha
+                            a coleção completa
                         </span>
                     </h2>
+                    <p
+                        style={{
+                            fontFamily: 'var(--font-body)',
+                            fontSize: '1rem',
+                            color: 'rgba(255,251,235,0.4)',
+                            maxWidth: '460px',
+                            margin: '0 auto',
+                            lineHeight: 1.65,
+                        }}
+                    >
+                        Nos combos, você escolhe quais volumes quer receber após a compra.
+                    </p>
                 </motion.div>
 
-                {/* ── Two-column: book stack + pricing card ── */}
-                <div
+                {/* ── Cards ── */}
+                <motion.div
+                    variants={stagger}
+                    initial="hidden"
+                    whileInView="show"
+                    viewport={{ once: true, margin: '-40px' }}
                     style={{
                         display: 'grid',
-                        gridTemplateColumns: 'repeat(auto-fit, minmax(min(100%, 340px), 1fr))',
-                        gap: 'clamp(2rem, 5vw, 4rem)',
-                        alignItems: 'center',
-                        maxWidth: '960px',
+                        gridTemplateColumns: 'repeat(auto-fit, minmax(min(100%, 270px), 1fr))',
+                        gap: 'clamp(1rem, 2.5vw, 1.75rem)',
+                        alignItems: 'end',
+                        maxWidth: '980px',
                         margin: '0 auto',
                     }}
                 >
-                    {/* LEFT — book stack visual */}
-                    <BookStack />
+                    {PLANS.map((plan, i) => (
+                        <PlanCard key={plan.key} plan={plan} index={i} />
+                    ))}
+                </motion.div>
 
-                    {/* RIGHT — includes + pricing */}
-                    <div>
-                        {/* Includes list */}
-                        <p className="label" style={{ color: 'rgba(255,251,235,0.35)', marginBottom: '1.25rem' }}>
-                            O que está incluído
-                        </p>
-                        <motion.ul
-                            variants={listVariants}
-                            initial="hidden"
-                            whileInView="show"
-                            viewport={{ once: true }}
-                            style={{ listStyle: 'none', padding: 0, margin: '0 0 2.5rem', display: 'flex', flexDirection: 'column', gap: '0.875rem' }}
-                        >
-                            {bundleIncludes.map((text, i) => (
-                                <motion.li
-                                    key={i}
-                                    variants={listItem}
-                                    style={{ display: 'flex', gap: '0.75rem', alignItems: 'flex-start' }}
-                                >
-                                    <CheckIcon />
-                                    <span style={{ fontFamily: 'var(--font-body)', fontSize: '0.95rem', color: 'rgba(255,251,235,0.8)', lineHeight: 1.55 }}>
-                                        {text}
-                                    </span>
-                                </motion.li>
-                            ))}
-                        </motion.ul>
-
-                        {/* ── Pricing card ── */}
-                        <motion.div
-                            variants={fadeUp}
-                            initial="hidden"
-                            whileInView="show"
-                            viewport={{ once: true }}
-                            style={{
-                                background: 'rgba(255,251,235,0.04)',
-                                border: '1px solid rgba(255,251,235,0.1)',
-                                borderRadius: '1.25rem',
-                                padding: 'clamp(1.5rem, 4vw, 2.25rem)',
-                                position: 'relative',
-                                overflow: 'hidden',
-                            }}
-                        >
-                            {/* Card inner glow */}
-                            <div aria-hidden="true" style={{ position: 'absolute', top: 0, left: 0, right: 0, height: '1px', background: 'linear-gradient(90deg, transparent, rgba(217,119,6,0.5), transparent)' }} />
-
-                            {/* Original price */}
-                            <p style={{ fontFamily: 'var(--font-mono)', fontSize: '0.85rem', color: 'rgba(255,251,235,0.3)', textDecoration: 'line-through', marginBottom: '0.2rem' }}>
-                                De {PRICE_FULL}
-                            </p>
-
-                            {/* Sale price — hero size */}
-                            <div style={{ display: 'flex', alignItems: 'flex-end', gap: '0.25rem', marginBottom: '0.5rem' }}>
-                                <p style={{ fontFamily: 'var(--font-mono)', fontSize: '1.1rem', color: 'rgba(255,251,235,0.5)', marginBottom: '0.6rem' }}>
-                                    R$
-                                </p>
-                                <p
-                                    style={{
-                                        fontFamily: 'var(--font-display)',
-                                        fontSize: 'clamp(3.5rem, 8vw, 5.5rem)',
-                                        fontWeight: 900,
-                                        color: '#FCD34D',
-                                        lineHeight: 1,
-                                        letterSpacing: '-0.03em',
-                                    }}
-                                >
-                                    97
-                                </p>
-                                <p style={{ fontFamily: 'var(--font-display)', fontSize: '1.5rem', fontWeight: 700, color: 'rgba(252,211,77,0.6)', marginBottom: '0.7rem' }}>
-                                    ,90
-                                </p>
-                            </div>
-
-                            {/* Savings pill */}
-                            <div style={{ marginBottom: '1.75rem' }}>
-                                <span
-                                    style={{
-                                        display: 'inline-block',
-                                        background: 'rgba(217,119,6,0.25)',
-                                        border: '1px solid rgba(217,119,6,0.35)',
-                                        color: '#FCD34D',
-                                        padding: '0.3rem 0.875rem',
-                                        borderRadius: '2rem',
-                                        fontFamily: 'var(--font-mono)',
-                                        fontSize: '0.68rem',
-                                        letterSpacing: '0.08em',
-                                    }}
-                                >
-                                    ECONOMIZE {SAVINGS} · {DISCOUNT_PCT}
-                                </span>
-                            </div>
-
-                            {/* CTA */}
-                            <motion.a
-                                href={CHECKOUT_URL}
-                                target="_blank"
-                                rel="noopener noreferrer"
-                                className="btn btn-xl cursor-pointer"
-                                whileHover={{ scale: 1.03, boxShadow: '0 12px 48px rgba(154,52,18,0.65)' }}
-                                whileTap={{ scale: 0.97 }}
-                                transition={{ duration: 0.2 }}
-                                style={{
-                                    display: 'flex',
-                                    width: '100%',
-                                    justifyContent: 'center',
-                                    background: 'linear-gradient(135deg, #C2410C 0%, #9A3412 100%)',
-                                    color: '#FFFFFF',
-                                    fontSize: '1.05rem',
-                                    fontWeight: 700,
-                                    boxShadow: '0 4px 24px rgba(154,52,18,0.5)',
-                                    marginBottom: '1.25rem',
-                                    textDecoration: 'none',
-                                    letterSpacing: '0.01em',
-                                }}
-                            >
-                                Quero a Coleção Completa →
-                            </motion.a>
-
-                            {/* Trust signals */}
-                            <div style={{ display: 'flex', justifyContent: 'center', gap: '1.25rem', flexWrap: 'wrap' }}>
-                                {[
-                                    { icon: '🔒', text: 'Pagamento seguro' },
-                                    { icon: '⚡', text: 'Acesso imediato' },
-                                    { icon: '↩', text: '7 dias de garantia' },
-                                ].map(({ icon, text }) => (
-                                    <span
-                                        key={text}
-                                        style={{
-                                            fontFamily: 'var(--font-mono)',
-                                            fontSize: '0.62rem',
-                                            letterSpacing: '0.06em',
-                                            color: 'rgba(255,251,235,0.35)',
-                                            display: 'flex',
-                                            alignItems: 'center',
-                                            gap: '0.3rem',
-                                        }}
-                                    >
-                                        <span>{icon}</span>
-                                        {text.toUpperCase()}
-                                    </span>
-                                ))}
-                            </div>
-                        </motion.div>
-                    </div>
-                </div>
+                {/* ── Footer note ── */}
+                <motion.div
+                    variants={fadeUp}
+                    initial="hidden"
+                    whileInView="show"
+                    viewport={{ once: true }}
+                    style={{
+                        display: 'flex',
+                        justifyContent: 'center',
+                        alignItems: 'center',
+                        gap: '0.5rem',
+                        marginTop: 'clamp(2rem, 4vw, 3rem)',
+                    }}
+                >
+                    <FlashIcon />
+                    <p
+                        style={{
+                            fontFamily: 'var(--font-mono)',
+                            fontSize: '0.65rem',
+                            letterSpacing: '0.09em',
+                            color: 'rgba(255,251,235,0.2)',
+                            textTransform: 'uppercase',
+                        }}
+                    >
+                        Todos os planos incluem garantia de 7 dias e acesso imediato
+                    </p>
+                </motion.div>
             </div>
         </section>
     );
