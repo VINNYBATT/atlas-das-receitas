@@ -228,7 +228,7 @@ function EbookCard({ ebook, onSaibaMais }) {
             onMouseEnter={(e) => { e.currentTarget.style.boxShadow = 'var(--shadow-card-hover)'; }}
             onMouseLeave={(e) => { e.currentTarget.style.boxShadow = 'var(--shadow-card)'; }}
         >
-            <div style={{ position: 'relative', aspectRatio: '4/3', overflow: 'hidden' }}>
+            <div style={{ position: 'relative', aspectRatio: '2/3', overflow: 'hidden' }}>
                 <motion.div
                     style={{ position: 'absolute', inset: 0 }}
                     whileHover={{ scale: 1.06 }}
@@ -239,7 +239,7 @@ function EbookCard({ ebook, onSaibaMais }) {
                         alt={ebook.title}
                         fill
                         sizes="(max-width: 640px) 50vw, (max-width: 1024px) 33vw, 25vw"
-                        style={{ objectFit: 'cover' }}
+                        style={{ objectFit: 'contain' }}
                     />
                     <div style={{
                         position: 'absolute', inset: 0,
