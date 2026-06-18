@@ -6,7 +6,6 @@ import { motion, useScroll, useTransform, useReducedMotion } from 'framer-motion
 
 const HERO_IMAGE = 'https://images.unsplash.com/photo-1414235077428-338989a2e8c0?w=1920&q=85';
 
-// Floating ebook mockup data — pulled from the real ebook list
 const FLOATING_BOOKS = [
     {
         id: 1,
@@ -16,8 +15,8 @@ const FLOATING_BOOKS = [
         accent: '#52B788',
         image: 'https://images.unsplash.com/photo-1512621776951-a57141f2eefd?w=400&q=80',
         rotate: -8,
-        x: '62vw',
-        y: '14vh',
+        x: '58%',
+        y: '22%',
         delay: 0.6,
         scale: 1,
     },
@@ -29,8 +28,8 @@ const FLOATING_BOOKS = [
         accent: '#FB923C',
         image: 'https://images.unsplash.com/photo-1569050467447-ce54b3bbc37d?w=400&q=80',
         rotate: 5,
-        x: '72vw',
-        y: '38vh',
+        x: '72%',
+        y: '42%',
         delay: 0.85,
         scale: 0.88,
     },
@@ -42,8 +41,8 @@ const FLOATING_BOOKS = [
         accent: '#C4B5FD',
         image: 'https://images.unsplash.com/photo-1578985545062-69928b1d9587?w=400&q=80',
         rotate: -4,
-        x: '55vw',
-        y: '56vh',
+        x: '56%',
+        y: '62%',
         delay: 1.05,
         scale: 0.78,
     },
@@ -71,10 +70,10 @@ function EbookMockup({ book, reduce }) {
                 position: 'absolute',
                 left: book.x,
                 top: book.y,
-                width: '160px',
+                width: '148px',
                 transform: `scale(${book.scale})`,
                 transformOrigin: 'top left',
-                zIndex: 2,
+                zIndex: 1,
                 filter: 'drop-shadow(0 24px 48px rgba(0,0,0,0.55))',
                 cursor: 'default',
                 pointerEvents: 'none',
@@ -99,13 +98,12 @@ function EbookMockup({ book, reduce }) {
                     border: '1px solid rgba(255,255,255,0.12)',
                 }}
             >
-                {/* Book cover image */}
                 <div style={{ position: 'relative', flex: 1, overflow: 'hidden' }}>
                     <Image
                         src={book.image}
                         alt=""
                         fill
-                        sizes="160px"
+                        sizes="148px"
                         style={{ objectFit: 'cover', opacity: 0.45 }}
                     />
                     <div
@@ -116,13 +114,7 @@ function EbookMockup({ book, reduce }) {
                         }}
                     />
                 </div>
-                {/* Book spine info */}
-                <div
-                    style={{
-                        padding: '0.875rem 0.875rem 1rem',
-                        background: book.color,
-                    }}
-                >
+                <div style={{ padding: '0.875rem 0.875rem 1rem', background: book.color }}>
                     <p
                         style={{
                             fontFamily: 'var(--font-mono)',
@@ -177,10 +169,10 @@ export function Hero() {
                 overflow: 'hidden',
                 display: 'flex',
                 alignItems: 'center',
+                paddingTop: 'clamp(4rem, 10vh, 5rem)',
             }}
             aria-label="Seção principal"
         >
-            {/* ── Parallax background ── */}
             <motion.div
                 aria-hidden="true"
                 style={{
@@ -191,72 +183,57 @@ export function Hero() {
                     backgroundPosition: 'center 35%',
                     y: bgY,
                     willChange: 'transform',
+                    zIndex: 0,
                 }}
             />
 
-            {/* ── Layered cinematic overlays ── */}
-            {/* Base dark */}
+            <div
+                aria-hidden="true"
+                style={{ position: 'absolute', inset: 0, background: 'rgba(10,4,0,0.55)', zIndex: 0 }}
+            />
             <div
                 aria-hidden="true"
                 style={{
                     position: 'absolute',
                     inset: 0,
-                    background: 'rgba(10,4,0,0.55)',
+                    zIndex: 0,
+                    background: 'linear-gradient(105deg, rgba(10,4,0,0.92) 0%, rgba(10,4,0,0.82) 42%, rgba(10,4,0,0.22) 68%, transparent 100%)',
                 }}
             />
-            {/* Left-side gradient so text is always readable */}
             <div
                 aria-hidden="true"
                 style={{
                     position: 'absolute',
                     inset: 0,
-                    background:
-                        'linear-gradient(105deg, rgba(10,4,0,0.92) 0%, rgba(10,4,0,0.78) 38%, rgba(10,4,0,0.18) 65%, transparent 100%)',
+                    zIndex: 0,
+                    background: 'linear-gradient(to top, rgba(10,4,0,0.75) 0%, transparent 40%)',
                 }}
             />
-            {/* Bottom fog */}
             <div
                 aria-hidden="true"
                 style={{
                     position: 'absolute',
                     inset: 0,
-                    background:
-                        'linear-gradient(to top, rgba(10,4,0,0.75) 0%, transparent 40%)',
+                    zIndex: 0,
+                    background: 'radial-gradient(ellipse 70% 50% at 50% 110%, rgba(180,83,9,0.35) 0%, transparent 65%)',
                 }}
             />
-            {/* Warm amber glow — bottom center */}
             <div
                 aria-hidden="true"
                 style={{
                     position: 'absolute',
                     inset: 0,
-                    background:
-                        'radial-gradient(ellipse 70% 50% at 50% 110%, rgba(180,83,9,0.35) 0%, transparent 65%)',
-                }}
-            />
-            {/* Top-right rim light for depth */}
-            <div
-                aria-hidden="true"
-                style={{
-                    position: 'absolute',
-                    inset: 0,
-                    background:
-                        'radial-gradient(ellipse 50% 40% at 85% 0%, rgba(217,119,6,0.12) 0%, transparent 60%)',
+                    zIndex: 0,
+                    background: 'radial-gradient(ellipse 50% 40% at 85% 0%, rgba(217,119,6,0.12) 0%, transparent 60%)',
                 }}
             />
 
-            {/* ── Floating ebook mockups (desktop only) ── */}
-            <div
-                aria-hidden="true"
-                style={{ display: 'contents' }}
-                className="hero-books"
-            >
+            <div aria-hidden="true" style={{ display: 'contents' }} className="hero-books">
                 {FLOATING_BOOKS.map((book) => (
                     <EbookMockup key={book.id} book={book} reduce={reduce} />
                 ))}
             </div>
 
-            {/* ── Main content ── */}
             <motion.div
                 className="container"
                 style={{
@@ -264,7 +241,6 @@ export function Hero() {
                     zIndex: 3,
                     opacity: contentOpacity,
                     y: contentY,
-                    paddingTop: '4rem',
                     maxWidth: '100%',
                 }}
             >
@@ -272,10 +248,10 @@ export function Hero() {
                     variants={stagger}
                     initial="hidden"
                     animate="show"
-                    style={{ maxWidth: '700px' }}
+                    style={{ maxWidth: 'min(620px, 52vw)' }}
+                    className="hero-text"
                 >
-                    {/* Eyebrow pill */}
-                    <motion.div variants={iv} style={{ marginBottom: '1.5rem' }}>
+                    <motion.div variants={iv} style={{ marginBottom: '1.25rem' }}>
                         <span
                             style={{
                                 display: 'inline-flex',
@@ -306,13 +282,12 @@ export function Hero() {
                         </span>
                     </motion.div>
 
-                    {/* Headline — editorial scale */}
                     <motion.h1
                         variants={iv}
                         style={{
                             fontFamily: 'var(--font-display)',
                             color: '#FFFFFF',
-                            fontSize: 'clamp(2.6rem, 6vw, 5.5rem)',
+                            fontSize: 'clamp(2.2rem, 4.5vw, 4rem)',
                             fontWeight: 900,
                             lineHeight: 1.02,
                             letterSpacing: '-0.03em',
@@ -325,11 +300,11 @@ export function Hero() {
                         variants={iv}
                         style={{
                             fontFamily: 'var(--font-display)',
-                            fontSize: 'clamp(2.6rem, 6vw, 5.5rem)',
+                            fontSize: 'clamp(2.2rem, 4.5vw, 4rem)',
                             fontWeight: 900,
                             lineHeight: 1.02,
                             letterSpacing: '-0.03em',
-                            marginBottom: '1.5rem',
+                            marginBottom: '1.25rem',
                             background: 'linear-gradient(90deg, #FCD34D 0%, #FB923C 60%, #F87171 100%)',
                             WebkitBackgroundClip: 'text',
                             WebkitTextFillColor: 'transparent',
@@ -339,23 +314,21 @@ export function Hero() {
                         receitas em 22 ebooks
                     </motion.h1>
 
-                    {/* Sub */}
                     <motion.p
                         variants={iv}
                         style={{
                             fontFamily: 'var(--font-body)',
                             color: 'rgba(255,251,235,0.72)',
-                            fontSize: 'clamp(1rem, 1.8vw, 1.18rem)',
+                            fontSize: 'clamp(0.95rem, 1.6vw, 1.1rem)',
                             lineHeight: 1.8,
-                            marginBottom: '2.5rem',
-                            maxWidth: '520px',
+                            marginBottom: '2rem',
+                            maxWidth: '480px',
                         }}
                     >
                         Receitas saudáveis, air fryer, marmitas, doces, low carb, veganas,
                         proteicas e muito mais — tudo organizado e pronto para usar.
                     </motion.p>
 
-                    {/* CTAs */}
                     <motion.div
                         variants={iv}
                         style={{ display: 'flex', gap: '0.875rem', flexWrap: 'wrap', alignItems: 'center' }}
@@ -397,15 +370,9 @@ export function Hero() {
                         </motion.a>
                     </motion.div>
 
-                    {/* Trust micro-line */}
                     <motion.div
                         variants={iv}
-                        style={{
-                            marginTop: '2rem',
-                            display: 'flex',
-                            gap: '1.5rem',
-                            flexWrap: 'wrap',
-                        }}
+                        style={{ marginTop: '1.75rem', display: 'flex', gap: '1.5rem', flexWrap: 'wrap' }}
                     >
                         {['🔒 Pagamento seguro', '⚡ Acesso imediato', '↩ Garantia de 7 dias'].map((t) => (
                             <span
@@ -425,7 +392,6 @@ export function Hero() {
                 </motion.div>
             </motion.div>
 
-            {/* ── Scroll cue ── */}
             <motion.div
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
@@ -460,16 +426,18 @@ export function Hero() {
                     style={{
                         width: '1px',
                         height: '3rem',
-                        background:
-                            'linear-gradient(to bottom, rgba(255,255,255,0.5), transparent)',
+                        background: 'linear-gradient(to bottom, rgba(255,255,255,0.5), transparent)',
                     }}
                 />
             </motion.div>
 
-            {/* ── Hide floating books on mobile via inline style ── */}
             <style>{`
-                @media (max-width: 900px) {
+                @media (max-width: 1024px) {
                     .hero-books > * { display: none !important; }
+                    .hero-text { max-width: 100% !important; }
+                }
+                @media (max-width: 640px) {
+                    .hero-text { max-width: 100% !important; }
                 }
             `}</style>
         </section>
