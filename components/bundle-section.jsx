@@ -3,8 +3,6 @@
 import { motion } from 'framer-motion';
 import { CHECKOUT_URL, CHECKOUT_URL_COMBO3, CHECKOUT_URL_COMBO5 } from '../lib/constants';
 
-// ── Icons ────────────────────────────────────────────────────────────────────
-
 function StarIcon() {
     return (
         <svg width="12" height="12" viewBox="0 0 14 14" fill="#D97706" aria-hidden="true">
@@ -16,10 +14,10 @@ function StarIcon() {
 function CheckIcon({ dim = false }) {
     return (
         <svg width="16" height="16" viewBox="0 0 18 18" fill="none" aria-hidden="true" style={{ flexShrink: 0, marginTop: '2px' }}>
-            <circle cx="9" cy="9" r="9" fill={dim ? 'rgba(255,251,235,0.08)' : 'rgba(217,119,6,0.2)'} />
+            <circle cx="9" cy="9" r="9" fill="rgba(217,119,6,0.2)" />
             <path
                 d="M5.5 9.5L7.5 11.5L12.5 6.5"
-                stroke={dim ? 'rgba(255,251,235,0.35)' : '#F59E0B'}
+                stroke="#F59E0B"
                 strokeWidth="1.75"
                 strokeLinecap="round"
                 strokeLinejoin="round"
@@ -46,8 +44,6 @@ function FlashIcon() {
     );
 }
 
-// ── Motion variants ──────────────────────────────────────────────────────────
-
 const fadeUp = {
     hidden: { opacity: 0, y: 36 },
     show:   { opacity: 1, y: 0, transition: { duration: 0.7, ease: [0.16, 1, 0.3, 1] } },
@@ -58,15 +54,13 @@ const stagger = {
     show:   { transition: { staggerChildren: 0.1, delayChildren: 0.15 } },
 };
 
-// ── Plan data ────────────────────────────────────────────────────────────────
-
 const PLANS = [
     {
         key: 'combo3',
-        label: 'Combo 3 Ebooks',
+        label: 'Combo Essencial',
         priceNum: '39',
         priceDec: ',90',
-        description: 'Escolha qualquer 3 ebooks da coleção.',
+        description: 'Escolha 3 volumes para começar sua coleção.',
         note: 'Você escolhe os volumes após a compra.',
         cta: 'Montar meu Combo 3',
         href: CHECKOUT_URL_COMBO3,
@@ -76,14 +70,14 @@ const PLANS = [
             '7 dias de garantia',
         ],
         highlight: false,
-        badge: null,
+        badge: 'Para começar',
     },
     {
         key: 'combo5',
-        label: 'Combo 5 Ebooks',
+        label: 'Combo Premium',
         priceNum: '59',
         priceDec: ',90',
-        description: 'Escolha qualquer 5 ebooks da coleção.',
+        description: 'Escolha 5 volumes e monte um kit mais completo.',
         note: 'Você escolhe os volumes após a compra.',
         cta: 'Montar meu Combo 5',
         href: CHECKOUT_URL_COMBO5,
@@ -93,7 +87,7 @@ const PLANS = [
             '7 dias de garantia',
         ],
         highlight: false,
-        badge: null,
+        badge: 'Mais escolhido',
     },
     {
         key: 'full',
@@ -118,13 +112,13 @@ const PLANS = [
     },
 ];
 
-// ── PlanCard ─────────────────────────────────────────────────────────────────
-
 function PlanCard({ plan, index }) {
     const {
         label, priceNum, priceDec, priceFull, savings, discountPct,
         description, note, cta, href, perks, highlight, badge,
     } = plan;
+
+    const isCombo = !highlight && badge !== null;
 
     return (
         <motion.div
@@ -137,19 +131,24 @@ function PlanCard({ plan, index }) {
                 flexDirection: 'column',
                 background: highlight
                     ? 'linear-gradient(155deg, rgba(154,52,18,0.22) 0%, rgba(100,30,5,0.14) 60%, rgba(15,5,0,0.1) 100%)'
-                    : 'rgba(255,251,235,0.03)',
+                    : isCombo
+                        ? 'linear-gradient(155deg, rgba(180,72,18,0.16) 0%, rgba(120,50,8,0.10) 60%, rgba(15,5,0,0.08) 100%)'
+                        : 'rgba(255,251,235,0.03)',
                 border: highlight
                     ? '1.5px solid rgba(217,119,6,0.5)'
-                    : '1px solid rgba(255,251,235,0.07)',
+                    : isCombo
+                        ? '1px solid rgba(217,119,6,0.3)'
+                        : '1px solid rgba(255,251,235,0.07)',
                 boxShadow: highlight
                     ? '0 0 80px rgba(154,52,18,0.25), 0 8px 32px rgba(0,0,0,0.5)'
-                    : '0 2px 20px rgba(0,0,0,0.3)',
+                    : isCombo
+                        ? '0 0 40px rgba(154,52,18,0.12), 0 4px 24px rgba(0,0,0,0.4)'
+                        : '0 2px 20px rgba(0,0,0,0.3)',
                 transform: highlight ? 'scale(1.04)' : 'scale(1)',
                 transition: 'box-shadow 0.3s ease',
             }}
         >
-            {/* Shimmer line on highlighted card top */}
-            {highlight && (
+            {(highlight || isCombo) && (
                 <div
                     aria-hidden="true"
                     style={{
@@ -158,13 +157,14 @@ function PlanCard({ plan, index }) {
                         left: '8%',
                         right: '8%',
                         height: '1.5px',
-                        background: 'linear-gradient(90deg, transparent, rgba(217,119,6,0.8), rgba(251,146,60,0.6), transparent)',
+                        background: highlight
+                            ? 'linear-gradient(90deg, transparent, rgba(217,119,6,0.8), rgba(251,146,60,0.6), transparent)'
+                            : 'linear-gradient(90deg, transparent, rgba(217,119,6,0.45), rgba(251,146,60,0.3), transparent)',
                         borderRadius: '2px',
                     }}
                 />
             )}
 
-            {/* Badge row — always reserve height so cards align */}
             <div style={{ minHeight: '2.25rem', marginBottom: '1rem', display: 'flex', alignItems: 'center' }}>
                 {badge ? (
                     <span
@@ -190,13 +190,12 @@ function PlanCard({ plan, index }) {
                 ) : null}
             </div>
 
-            {/* Plan name */}
             <p
                 style={{
                     fontFamily: 'var(--font-display)',
                     fontSize: highlight ? '1.4rem' : '1.15rem',
                     fontWeight: 700,
-                    color: highlight ? '#FCD34D' : 'rgba(255,251,235,0.8)',
+                    color: highlight ? '#FCD34D' : isCombo ? '#FDE68A' : 'rgba(255,251,235,0.8)',
                     marginBottom: '0.4rem',
                     lineHeight: 1.2,
                 }}
@@ -204,12 +203,11 @@ function PlanCard({ plan, index }) {
                 {label}
             </p>
 
-            {/* Description */}
             <p
                 style={{
                     fontFamily: 'var(--font-body)',
                     fontSize: '0.875rem',
-                    color: highlight ? 'rgba(255,251,235,0.6)' : 'rgba(255,251,235,0.45)',
+                    color: highlight ? 'rgba(255,251,235,0.6)' : isCombo ? 'rgba(255,251,235,0.55)' : 'rgba(255,251,235,0.45)',
                     lineHeight: 1.55,
                     marginBottom: note ? '0.4rem' : '1.5rem',
                 }}
@@ -217,7 +215,6 @@ function PlanCard({ plan, index }) {
                 {description}
             </p>
 
-            {/* Combo note */}
             {note && (
                 <p
                     style={{
@@ -233,7 +230,6 @@ function PlanCard({ plan, index }) {
                 </p>
             )}
 
-            {/* Price block */}
             <div style={{ marginBottom: '1.25rem' }}>
                 {priceFull && (
                     <div style={{ display: 'flex', alignItems: 'center', gap: '0.6rem', marginBottom: '0.2rem', flexWrap: 'wrap' }}>
@@ -270,7 +266,7 @@ function PlanCard({ plan, index }) {
                         style={{
                             fontFamily: 'var(--font-mono)',
                             fontSize: '0.9rem',
-                            color: highlight ? 'rgba(252,211,77,0.55)' : 'rgba(255,251,235,0.38)',
+                            color: (highlight || isCombo) ? 'rgba(252,211,77,0.55)' : 'rgba(255,251,235,0.38)',
                             paddingBottom: highlight ? '0.7rem' : '0.45rem',
                         }}
                     >
@@ -281,7 +277,7 @@ function PlanCard({ plan, index }) {
                             fontFamily: 'var(--font-display)',
                             fontSize: highlight ? 'clamp(3rem, 7vw, 4.5rem)' : 'clamp(2.2rem, 5vw, 3rem)',
                             fontWeight: 900,
-                            color: highlight ? '#FCD34D' : 'rgba(255,251,235,0.88)',
+                            color: highlight ? '#FCD34D' : isCombo ? '#FDE68A' : 'rgba(255,251,235,0.88)',
                             letterSpacing: '-0.03em',
                         }}
                     >
@@ -292,7 +288,7 @@ function PlanCard({ plan, index }) {
                             fontFamily: 'var(--font-display)',
                             fontSize: highlight ? '1.25rem' : '1rem',
                             fontWeight: 700,
-                            color: highlight ? 'rgba(252,211,77,0.55)' : 'rgba(255,251,235,0.38)',
+                            color: (highlight || isCombo) ? 'rgba(252,211,77,0.55)' : 'rgba(255,251,235,0.38)',
                             paddingBottom: highlight ? '0.7rem' : '0.45rem',
                         }}
                     >
@@ -316,7 +312,6 @@ function PlanCard({ plan, index }) {
                 )}
             </div>
 
-            {/* Perks list */}
             <ul
                 style={{
                     listStyle: 'none',
@@ -335,7 +330,7 @@ function PlanCard({ plan, index }) {
                             style={{
                                 fontFamily: 'var(--font-body)',
                                 fontSize: '0.875rem',
-                                color: highlight ? 'rgba(255,251,235,0.7)' : 'rgba(255,251,235,0.45)',
+                                color: highlight ? 'rgba(255,251,235,0.7)' : isCombo ? 'rgba(255,251,235,0.6)' : 'rgba(255,251,235,0.45)',
                                 lineHeight: 1.5,
                             }}
                         >
@@ -345,7 +340,6 @@ function PlanCard({ plan, index }) {
                 ))}
             </ul>
 
-            {/* CTA button */}
             <motion.a
                 href={href}
                 target="_blank"
@@ -354,7 +348,9 @@ function PlanCard({ plan, index }) {
                     scale: 1.03,
                     boxShadow: highlight
                         ? '0 8px 40px rgba(154,52,18,0.7)'
-                        : '0 4px 20px rgba(255,251,235,0.08)',
+                        : isCombo
+                            ? '0 6px 30px rgba(154,52,18,0.45)'
+                            : '0 4px 20px rgba(255,251,235,0.08)',
                 }}
                 whileTap={{ scale: 0.97 }}
                 transition={{ duration: 0.18 }}
@@ -372,16 +368,21 @@ function PlanCard({ plan, index }) {
                     cursor: 'pointer',
                     background: highlight
                         ? 'linear-gradient(135deg, #C2410C 0%, #9A3412 100%)'
-                        : 'rgba(255,251,235,0.06)',
-                    color: highlight ? '#FFFFFF' : 'rgba(255,251,235,0.6)',
-                    border: highlight ? 'none' : '1px solid rgba(255,251,235,0.1)',
-                    boxShadow: highlight ? '0 4px 28px rgba(154,52,18,0.5)' : 'none',
+                        : isCombo
+                            ? 'linear-gradient(135deg, #D97706 0%, #B45309 100%)'
+                            : 'rgba(255,251,235,0.06)',
+                    color: (highlight || isCombo) ? '#FFFFFF' : 'rgba(255,251,235,0.6)',
+                    border: (highlight || isCombo) ? 'none' : '1px solid rgba(255,251,235,0.1)',
+                    boxShadow: highlight
+                        ? '0 4px 28px rgba(154,52,18,0.5)'
+                        : isCombo
+                            ? '0 4px 20px rgba(180,83,9,0.35)'
+                            : 'none',
                 }}
             >
                 {cta} →
             </motion.a>
 
-            {/* Trust micro-copy */}
             <div
                 style={{
                     display: 'flex',
@@ -408,8 +409,6 @@ function PlanCard({ plan, index }) {
     );
 }
 
-// ── BundleSection ─────────────────────────────────────────────────────────────
-
 export function BundleSection() {
     return (
         <section
@@ -420,7 +419,6 @@ export function BundleSection() {
                 background: 'linear-gradient(170deg, #0A0400 0%, #180900 40%, #0F0500 100%)',
             }}
         >
-            {/* Grain texture */}
             <div
                 aria-hidden="true"
                 style={{
@@ -432,7 +430,6 @@ export function BundleSection() {
                     zIndex: 0,
                 }}
             />
-            {/* Top radial glow */}
             <div
                 aria-hidden="true"
                 style={{
@@ -443,7 +440,6 @@ export function BundleSection() {
                     pointerEvents: 'none', zIndex: 0,
                 }}
             />
-            {/* Bottom radial glow */}
             <div
                 aria-hidden="true"
                 style={{
@@ -457,7 +453,6 @@ export function BundleSection() {
 
             <div className="container section" style={{ position: 'relative', zIndex: 1 }}>
 
-                {/* ── Heading ── */}
                 <motion.div
                     variants={fadeUp}
                     initial="hidden"
@@ -508,7 +503,6 @@ export function BundleSection() {
                     </p>
                 </motion.div>
 
-                {/* ── Cards ── */}
                 <motion.div
                     variants={stagger}
                     initial="hidden"
@@ -528,7 +522,6 @@ export function BundleSection() {
                     ))}
                 </motion.div>
 
-                {/* ── Footer note ── */}
                 <motion.div
                     variants={fadeUp}
                     initial="hidden"
