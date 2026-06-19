@@ -6,13 +6,9 @@ import { motion, useScroll, useTransform, useReducedMotion } from 'framer-motion
 
 const HERO_IMAGE = 'https://images.unsplash.com/photo-1414235077428-338989a2e8c0?w=1920&q=85';
 
-const FLOATING_BOOKS = [
+const FLOATING_CARDS = [
     {
         id: 1,
-        title: 'Massa\nGourmet',
-        tag: 'Prato Principal',
-        color: 'linear-gradient(145deg, #1C1007 0%, #0F0804 100%)',
-        accent: '#D97706',
         image: 'https://images.unsplash.com/photo-1473093226555-0c1c76e95ead?w=400&q=80',
         rotate: -8,
         x: '58%',
@@ -22,10 +18,6 @@ const FLOATING_BOOKS = [
     },
     {
         id: 2,
-        title: 'Sobremesa\nSofisticada',
-        tag: 'Confeitaria',
-        color: 'linear-gradient(145deg, #1A0A1A 0%, #0D050D 100%)',
-        accent: '#C4B5FD',
         image: 'https://images.unsplash.com/photo-1488477181946-6428a0291777?w=400&q=80',
         rotate: 5,
         x: '72%',
@@ -35,10 +27,6 @@ const FLOATING_BOOKS = [
     },
     {
         id: 3,
-        title: 'Bowl\nPremium',
-        tag: 'Salada & Bowl',
-        color: 'linear-gradient(145deg, #071A0F 0%, #040D07 100%)',
-        accent: '#6EE7B7',
         image: 'https://images.unsplash.com/photo-1512621776951-a57141f2eefd?w=400&q=80',
         rotate: -4,
         x: '56%',
@@ -60,21 +48,21 @@ function item(reduce) {
     };
 }
 
-function EbookMockup({ book, reduce }) {
+function FoodCard({ card, reduce }) {
     return (
         <motion.div
-            initial={{ opacity: 0, y: reduce ? 0 : 60, rotate: book.rotate * 0.5 }}
-            animate={{ opacity: 1, y: 0, rotate: book.rotate }}
-            transition={{ duration: 1.1, delay: book.delay, ease: [0.16, 1, 0.3, 1] }}
+            initial={{ opacity: 0, y: reduce ? 0 : 60, rotate: card.rotate * 0.5 }}
+            animate={{ opacity: 1, y: 0, rotate: card.rotate }}
+            transition={{ duration: 1.1, delay: card.delay, ease: [0.16, 1, 0.3, 1] }}
             style={{
                 position: 'absolute',
-                left: book.x,
-                top: book.y,
+                left: card.x,
+                top: card.y,
                 width: '148px',
-                transform: `scale(${book.scale})`,
+                transform: `scale(${card.scale})`,
                 transformOrigin: 'top left',
                 zIndex: 1,
-                filter: 'drop-shadow(0 24px 48px rgba(0,0,0,0.55))',
+                filter: 'drop-shadow(0 24px 48px rgba(0,0,0,0.65))',
                 cursor: 'default',
                 pointerEvents: 'none',
             }}
@@ -83,63 +71,27 @@ function EbookMockup({ book, reduce }) {
             <motion.div
                 animate={reduce ? {} : { y: [0, -10, 0] }}
                 transition={{
-                    duration: 4 + book.id * 0.7,
+                    duration: 4 + card.id * 0.7,
                     repeat: Infinity,
                     ease: 'easeInOut',
-                    delay: book.id * 0.4,
+                    delay: card.id * 0.4,
                 }}
                 style={{
-                    borderRadius: '10px',
+                    borderRadius: '14px',
                     overflow: 'hidden',
-                    background: book.color,
                     aspectRatio: '3/4',
-                    display: 'flex',
-                    flexDirection: 'column',
-                    border: '1px solid rgba(255,255,255,0.12)',
+                    border: '1px solid rgba(255,255,255,0.14)',
+                    boxShadow: '0 8px 32px rgba(0,0,0,0.5), inset 0 1px 0 rgba(255,255,255,0.08)',
+                    position: 'relative',
                 }}
             >
-                <div style={{ position: 'relative', flex: 1, overflow: 'hidden' }}>
-                    <Image
-                        src={book.image}
-                        alt=""
-                        fill
-                        sizes="148px"
-                        style={{ objectFit: 'cover', opacity: 0.45 }}
-                    />
-                    <div
-                        style={{
-                            position: 'absolute',
-                            inset: 0,
-                            background: `linear-gradient(to bottom, ${book.color.split(' ')[2]} 0%, transparent 40%, rgba(0,0,0,0.5) 100%)`,
-                        }}
-                    />
-                </div>
-                <div style={{ padding: '0.875rem 0.875rem 1rem', background: book.color }}>
-                    <p
-                        style={{
-                            fontFamily: 'var(--font-mono)',
-                            fontSize: '0.55rem',
-                            letterSpacing: '0.14em',
-                            color: book.accent,
-                            textTransform: 'uppercase',
-                            marginBottom: '0.3rem',
-                        }}
-                    >
-                        {book.tag}
-                    </p>
-                    <p
-                        style={{
-                            fontFamily: 'var(--font-display)',
-                            fontSize: '0.85rem',
-                            fontWeight: 700,
-                            color: '#FFFFFF',
-                            lineHeight: 1.25,
-                            whiteSpace: 'pre-line',
-                        }}
-                    >
-                        {book.title}
-                    </p>
-                </div>
+                <Image
+                    src={card.image}
+                    alt=""
+                    fill
+                    sizes="148px"
+                    style={{ objectFit: 'cover' }}
+                />
             </motion.div>
         </motion.div>
     );
@@ -229,8 +181,8 @@ export function Hero() {
             />
 
             <div aria-hidden="true" style={{ display: 'contents' }} className="hero-books">
-                {FLOATING_BOOKS.map((book) => (
-                    <EbookMockup key={book.id} book={book} reduce={reduce} />
+                {FLOATING_CARDS.map((card) => (
+                    <FoodCard key={card.id} card={card} reduce={reduce} />
                 ))}
             </div>
 
