@@ -9,7 +9,7 @@ const HERO_IMAGE = 'https://images.unsplash.com/photo-1414235077428-338989a2e8c0
 const FLOATING_CARDS = [
     {
         id: 1,
-        image: 'https://images.unsplash.com/photo-1473093226555-0c1c76e95ead?w=400&q=80',
+        image: 'https://images.unsplash.com/photo-1551183053-bf91a1d81141?w=800&q=90&auto=format&fit=crop',
         rotate: -8,
         x: '58%',
         y: '22%',
